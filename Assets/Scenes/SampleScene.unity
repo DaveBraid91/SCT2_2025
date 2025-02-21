@@ -585,6 +585,7 @@ GameObject:
   - component: {fileID: 1052350572}
   - component: {fileID: 1052350576}
   - component: {fileID: 1052350575}
+  - component: {fileID: 1052350578}
   - component: {fileID: 1052350573}
   - component: {fileID: 1052350577}
   m_Layer: 0
@@ -617,7 +618,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1052350571}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56070a7aeb0c5e24f9851d3afddd1ef0, type: 3}
   m_Name: 
@@ -700,6 +701,25 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1052350578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1052350571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7e548b6f8f7c244a944bdf473a3b186, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 330585545}
+  forwardSpeed: 5
+  sideSpeed: 5
+  rotationSpeed: 180
+  jumpForce: 5
+  gravity: 9.81
+  stickToGroundVelocity: 3
 --- !u!43 &1207993213
 Mesh:
   m_ObjectHideFlags: 0

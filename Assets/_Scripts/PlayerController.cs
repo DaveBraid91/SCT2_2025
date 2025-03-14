@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Animator), typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Camera")]
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AnimationCurve slideSlowDownCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
 
     private CharacterController _characterController;
+    private Animator _animator;
 
     private Vector3 _playerVelocity;
     private float _verticalVelocity;
@@ -36,9 +38,16 @@ public class PlayerController : MonoBehaviour
     private bool _jumpEnded = true;
     private bool _isSliding = true;
     
+    private static readonly int XSpeed = Animator.StringToHash("xSpeed");
+    private static readonly int ZSpeed = Animator.StringToHash("zSpeed");
+    private static readonly int Jump = Animator.StringToHash("jump");
+    private static readonly int EndJump = Animator.StringToHash("endJump");
+    private static readonly int Crouched = Animator.StringToHash("crouched");
+
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
+        _animator = GetComponent<Animator>();
         slideSlope = _characterController.slopeLimit;
         _slidingSlowdownTimeInverse = 1 / slideSlowdownTime;
     }
@@ -51,6 +60,7 @@ public class PlayerController : MonoBehaviour
 
         ApplyTotalVelocity();
 
+        Crouch();
         UpdateRotation();
     }
 
@@ -61,6 +71,7 @@ public class PlayerController : MonoBehaviour
             _isJumping = true;
            _jumpEnded = false;
             _verticalVelocity = jumpForce;
+            _animator.SetTrigger(Jump);
         }
 
         // if (_isJumping && !_characterController.isGrounded)
@@ -68,9 +79,10 @@ public class PlayerController : MonoBehaviour
         //     _jumpEnded = true;
         // }
 
-        if (_isJumping && _characterController.isGrounded)
+        if (_isJumping && _characterController.isGrounded && _characterController.velocity.y < 0)
         {
             _isJumping = false;
+            _animator.SetTrigger(EndJump);
         }
 
         if (_characterController.isGrounded && !_isJumping && _characterController.velocity.y < 0)
@@ -109,6 +121,9 @@ public class PlayerController : MonoBehaviour
         input = new Vector3(input.x * sideSpeed, 0, input.z * forwardSpeed);
         
         _playerVelocity = input;
+        
+        _animator.SetFloat(XSpeed, xInput);
+        _animator.SetFloat(ZSpeed, yInput);
     }
 
     private void UpdateSlideVelocity()
@@ -148,5 +163,11 @@ public class PlayerController : MonoBehaviour
                 ? slideSlowDownCurve.Evaluate(Mathf.Clamp01(_slidingTime * _slidingSlowdownTimeInverse))
                 : Mathf.Lerp(_slideVelocityFactor, 1, Time.deltaTime * slideFactorRampUp);
         }
+    }
+
+    private void Crouch()
+    {
+        //Here goes the logic of your exercise.
+        _animator.SetBool(Crouched, Input.GetAxis("Crouch") > 0.5f);
     }
 }

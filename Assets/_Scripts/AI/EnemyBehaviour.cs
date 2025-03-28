@@ -12,6 +12,8 @@ public enum EnemyState
 
 public class EnemyBehaviour : MonoBehaviour
 {
+    private static readonly int Speed = Animator.StringToHash("speed");
+
     [field:SerializeField]
     public Transform target {get; private set;}
 
@@ -22,9 +24,18 @@ public class EnemyBehaviour : MonoBehaviour
 
     [SerializeField] private AIBase[] states;
 
+    public float speed;
+
+    private SphereCollider _collider ;
+    private Animator _animator;
+
     private void Start()
     {
         states = GetComponents<AIBase>();
+        _animator = GetComponent<Animator>();
+        _collider = GetComponent<SphereCollider>();
+        _collider.radius = detectionRadius;
+        _animator.SetFloat(Speed, speed);
     }
 
     private void Update()
@@ -52,13 +63,17 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (!PlayerIsOnRange(detectionRadius)) return;
 
+        speed = 7;
+        _animator.SetFloat(Speed, speed);
         ChangeState(EnemyState.FollowTarget);
     }
     
     private void UpdateWander()
     {
         if (!PlayerIsOnRange(detectionRadius)) return;
-
+        
+        speed = 7;
+        _animator.SetFloat(Speed, speed);
         ChangeState(EnemyState.FollowTarget);
     }
 
@@ -66,6 +81,8 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (PlayerIsOnRange(detectionRadius)) return;
         
+        speed = 3.5f;
+        _animator.SetFloat(Speed, speed);
         var dice = Random.Range(0, 100);
         ChangeState(dice >= 50 ? EnemyState.Wander : EnemyState.Patrol);
     }
@@ -91,7 +108,20 @@ public class EnemyBehaviour : MonoBehaviour
 
     private bool PlayerIsOnRange(float detectionRange)
     {
+        if (!target) return false;
         var sqrDistance = (target.position - transform.position).sqrMagnitude;
         return sqrDistance <= Mathf.Pow(detectionRange, 2);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.GetComponent<ITargeteableByAI>() == null) return;
+        
+        target = other.GetComponent<ITargeteableByAI>().GetTarget();
+    }
+    
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.GetComponent<ITargeteableByAI>() == null) return;
     }
 }

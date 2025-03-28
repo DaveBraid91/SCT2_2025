@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator), typeof(CharacterController))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, ITargeteableByAI
 {
     [Header("Camera")]
     [SerializeField] private Camera cam;
@@ -169,5 +169,10 @@ public class PlayerController : MonoBehaviour
     {
         //Here goes the logic of your exercise.
         _animator.SetBool(Crouched, Input.GetAxis("Crouch") > 0.5f);
+    }
+
+    public Transform GetTarget()
+    {
+        return transform;
     }
 }

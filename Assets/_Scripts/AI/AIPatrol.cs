@@ -24,4 +24,9 @@ public class AIPatrol : AIBase
 
         agent.SetDestination(wayPoints[_currentWayPointIndex++].position);
     }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+    }
 }

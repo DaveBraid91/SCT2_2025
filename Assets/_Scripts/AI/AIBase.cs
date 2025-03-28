@@ -20,5 +20,6 @@ public abstract class AIBase : MonoBehaviour
     {
         agent.ResetPath();
         agent.stoppingDistance = breakingDistance;
+        agent.speed = enemyBehaviour.speed;
     }
 }

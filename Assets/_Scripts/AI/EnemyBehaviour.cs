@@ -7,6 +7,7 @@ public enum EnemyState
     Wander,
     FollowTarget,
     Patrol,
+    Death,
     Attack
 }
 
@@ -28,12 +29,14 @@ public class EnemyBehaviour : MonoBehaviour
 
     private SphereCollider _collider ;
     private Animator _animator;
+    private EnemyHealth _enemyHealth;
 
     private void Start()
     {
         states = GetComponents<AIBase>();
         _animator = GetComponent<Animator>();
         _collider = GetComponent<SphereCollider>();
+        _enemyHealth = GetComponent<EnemyHealth>();
         _collider.radius = detectionRadius;
         _animator.SetFloat(Speed, speed);
     }
@@ -53,6 +56,8 @@ public class EnemyBehaviour : MonoBehaviour
                 return;
             case EnemyState.Attack:
                 break;
+            case EnemyState.Death:
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -61,8 +66,15 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void UpdatePatrol()
     {
-        if (!PlayerIsOnRange(detectionRadius)) return;
+        if (!PlayerIsOnRange(detectionRadius) && _enemyHealth.CurrentHealth > 0) return;
 
+        if (_enemyHealth.CurrentHealth <= 0)
+        {
+            ChangeState(EnemyState.Death);
+            speed = 0;
+            return;
+        }
+        
         speed = 7;
         _animator.SetFloat(Speed, speed);
         ChangeState(EnemyState.FollowTarget);
@@ -70,7 +82,15 @@ public class EnemyBehaviour : MonoBehaviour
     
     private void UpdateWander()
     {
-        if (!PlayerIsOnRange(detectionRadius)) return;
+        if (!PlayerIsOnRange(detectionRadius) && _enemyHealth.CurrentHealth > 0) return;
+
+        if (_enemyHealth.CurrentHealth <= 0)
+        {
+            ChangeState(EnemyState.Death);
+            speed = 0;
+            return;
+        }
+            
         
         speed = 7;
         _animator.SetFloat(Speed, speed);
@@ -79,8 +99,14 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void UpdateFollowTarget()
     {
-        if (PlayerIsOnRange(detectionRadius)) return;
-        
+        if (PlayerIsOnRange(detectionRadius) && _enemyHealth.CurrentHealth > 0) return;
+
+        if (_enemyHealth.CurrentHealth <= 0)
+        {
+            ChangeState(EnemyState.Death);
+            speed = 0;
+            return;
+        }
         speed = 3.5f;
         _animator.SetFloat(Speed, speed);
         var dice = Random.Range(0, 100);

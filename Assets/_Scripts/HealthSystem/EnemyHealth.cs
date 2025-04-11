@@ -20,7 +20,6 @@ public class EnemyHealth : BaseHealth
 
     protected override void Die()
     {
-        _enemyBehaviour.enabled = false;
         _agent.ResetPath();
         _anim.SetTrigger(Die1);
         Destroy(gameObject, deathCooldown);
